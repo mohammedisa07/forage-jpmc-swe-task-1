@@ -25,25 +25,25 @@ import urllib.request
 # Server API URLs
 QUERY = "http://localhost:8080/query?id={}"
 
-# 500 server request
+# 500 server requests
 N = 500
 
-
 def getDataPoint(quote):
-    """ Produce all the needed values to generate a datapoint """
-    """ ------------- Update this function ------------- """
+    """Produce all the needed values to generate a datapoint."""
     stock = quote['stock']
     bid_price = float(quote['top_bid']['price'])
     ask_price = float(quote['top_ask']['price'])
-    price = bid_price
+    # Compute the correct stock price using the formula: (bid_price + ask_price) / 2
+    price = (bid_price + ask_price) / 2
     return stock, bid_price, ask_price, price
 
-
 def getRatio(price_a, price_b):
-    """ Get ratio of price_a and price_b """
-    """ ------------- Update this function ------------- """
-    return 1
-
+    """Get ratio of price_a and price_b."""
+    # Update the function to return the ratio of price_a to price_b
+    # Handle the case where price_b is 0 to avoid division by zero
+    if price_b == 0:
+        return None
+    return price_a / price_b
 
 # Main
 if __name__ == "__main__":
@@ -51,9 +51,16 @@ if __name__ == "__main__":
     for _ in iter(range(N)):
         quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
 
-        """ ----------- Update to get the ratio --------------- """
+        # Create a dictionary to store stock prices
+        prices = {}
         for quote in quotes:
             stock, bid_price, ask_price, price = getDataPoint(quote)
+            # Print the correct stock information
             print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+            # Store the stock price in the dictionary
+            prices[stock] = price
 
-        print("Ratio %s" % getRatio(price, price))
+        # Calculate and print the correct ratio of prices for stocks 'ABC' and 'DEF'
+        ratio = getRatio(prices.get('ABC', 0), prices.get('DEF', 0))
+        print("Ratio %s" % ratio)
+
